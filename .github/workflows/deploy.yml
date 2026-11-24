@@ -1,26 +1,39 @@
-name: AWS EC2 SSH Deployment
+name: AWS EC2 Kubernetes Deployment
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
+
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: [self-hosted, Linux, X64]
 
     steps:
-      - name: Connect to EC2 using SSH
-        uses: appleboy/ssh-action@v1.2.2
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          script: |
-            echo "Connected to AWS EC2"
-            whoami
-            hostname
-            sudo kubectl get nodes
-            sudo kubectl get pods
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Verify EC2 runner
+        run: |
+          echo "Connected to AWS EC2"
+          whoami
+          hostname
+
+      - name: Check Kubernetes cluster
+        run: |
+          sudo kubectl get nodes
+          sudo kubectl get pods -A
+
+      - name: Deploy Online Boutique
+        run: |
+          cd ~/microservices-demo
+          sudo kubectl apply -f ./release/kubernetes-manifests.yaml
+
+      - name: Verify deployment
+        run: |
+          sudo kubectl get deployments -A
+          sudo kubectl get services -A
+          sudo kubectl get pods -A
+
