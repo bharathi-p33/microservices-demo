@@ -1,0 +1,38 @@
+name: AWS Microservices CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build and Validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Check Docker
+        run: docker --version
+
+      - name: Check repository
+        run: |
+          echo "Repository checkout successful"
+          ls -la
+          test -d src
+          test -f skaffold.yaml
+          echo "Required project files found"
+
+      - name: Build microservices
+        run: |
+          docker build -t online-boutique-frontend ./src/frontend
+          echo "Frontend Docker image built successfully"
