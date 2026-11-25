@@ -1,0 +1,10 @@
+resource "kubernetes_namespace_v1" "terraform_managed" {
+  metadata {
+    name = "terraform-managed"
+
+    labels = {
+      managed_by = "terraform"
+      project    = "online-boutique"
+    }
+  }
+}

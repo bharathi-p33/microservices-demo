@@ -15,6 +15,17 @@
 *.iws
 *.pyc
 *.swp
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+
+# Sensitive files
+*.pem
+kubeconfig
+.terraformrc
 *.tfstate*
 *.tfvars
 *~
